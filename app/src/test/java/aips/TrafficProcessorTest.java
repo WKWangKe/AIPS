@@ -41,12 +41,14 @@ public class TrafficProcessorTest {
 
     @Test
     public void getSlotsWithMostTraffic() throws Exception {
+        // test when there are less than 3 slots
         TrafficProcessor tp = new TrafficProcessor();
         assertTrue(tp.getSlotsWithMostTraffic().isEmpty());
         tp.addSlotTraffic(new SlotTraffic(LocalDateTime.of(2021, 12, 1, 5, 0, 0), 10));
         assertEquals(1, tp.getSlotsWithMostTraffic().size());
         tp.addSlotTraffic(new SlotTraffic(LocalDateTime.of(2021, 12, 1, 5, 30, 0), 10));
         assertEquals(2, tp.getSlotsWithMostTraffic().size());
+
         Set<LocalDateTime> actual = new HashSet<>(processor.getSlotsWithMostTraffic());
         assertTrue(actual.contains(LocalDateTime.of(2021, 12, 1, 6, 30, 0)));
         assertTrue(actual.contains(LocalDateTime.of(2021, 12, 1, 5, 0, 0)));
@@ -55,6 +57,7 @@ public class TrafficProcessorTest {
 
     @Test
     public void getThreeContiguousSlotsWithLeastTraffic() throws Exception {
+        // test when there no three contiguous slots
         TrafficProcessor tp = new TrafficProcessor();
         assertTrue(tp.getThreeContiguousSlotsWithLeastTraffic().isEmpty());
         tp.addSlotTraffic(new SlotTraffic(LocalDateTime.of(2021, 12, 1, 5, 0, 0), 10));
