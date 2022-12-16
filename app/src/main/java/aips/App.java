@@ -3,6 +3,7 @@
  */
 package aips;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,13 +15,13 @@ public class App {
         TrafficProcessor processor = new TrafficProcessor();
         TrafficFileReader reader;
         try {
-            reader = new TrafficFileReader("/Users/kew/IdeaProjects/aips/sample_input.txt");
+            reader = new TrafficFileReader(new File("/Users/kew/IdeaProjects/aips/sample_input.txt"));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         while(reader.hasNext()) {
             try {
-                processor.addSlotTraffic(reader.readNext());
+                processor.addSlotTraffic(reader.next());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

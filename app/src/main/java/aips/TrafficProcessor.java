@@ -5,13 +5,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class takes in Slot traffic info and process them to provide useful insights
+ */
 public class TrafficProcessor {
     private static final int MIN_N = 3;
     private static final int MAX_N = 3;
     private final Deque<SlotTraffic> lastNSlots;
 
     private long lastNSlotsCount;
-    private final PriorityQueue<SlotTraffic> maxSlots;
+    private final PriorityQueue<SlotTraffic> maxNSlots;
 
     private final Map<LocalDate, Long> dailyCounts;
     private long totalCount;
@@ -21,12 +24,12 @@ public class TrafficProcessor {
 
     public TrafficProcessor() {
         lastNSlots = new LinkedList<>();
-        maxSlots = new PriorityQueue<>(Comparator.comparingLong(SlotTraffic::count));
+        maxNSlots = new PriorityQueue<>(Comparator.comparingLong(SlotTraffic::count));
         dailyCounts = new LinkedHashMap<>();
         minNSlotsCount = Long.MAX_VALUE;
     }
 
-    private boolean checkInputValid(SlotTraffic input) {
+    private boolean checkInputValid(SlotTraffic ignoredInput) {
         //Assuming input is always valid for now
         return true;
     }
@@ -40,15 +43,15 @@ public class TrafficProcessor {
             lastNSlotsCount -= lastNSlots.pollFirst().count();
         }
         // Check whether the last N time slot are consecutive
-        if (lastNSlots.peekFirst().time().plusMinutes(SlotTraffic.INTERVAL_MIN * (MIN_N - 1)).isEqual(input.time())) {
+        if (Objects.requireNonNull(lastNSlots.peekFirst()).time().plusMinutes(SlotTraffic.INTERVAL_MIN * (MIN_N - 1)).isEqual(input.time())) {
             if (lastNSlotsCount < minNSlotsCount) {
                 minNSlotsCount = lastNSlotsCount;
                 minNSlotsEnd = input.time();
             }
         }
-        maxSlots.add(input);
-        if (maxSlots.size() > MAX_N) {
-            maxSlots.poll();
+        maxNSlots.add(input);
+        if (maxNSlots.size() > MAX_N) {
+            maxNSlots.poll();
         }
         LocalDate date = input.time().toLocalDate();
         dailyCounts.put(date, dailyCounts.getOrDefault(date, 0L) + input.count());
@@ -63,7 +66,7 @@ public class TrafficProcessor {
         return dailyCounts;
     }
     public List<LocalDateTime> getSlotsWithMostTraffic() {
-        return maxSlots.stream().map(SlotTraffic::time).collect(Collectors.toList());
+        return maxNSlots.stream().map(SlotTraffic::time).collect(Collectors.toList());
     }
 
     public List<LocalDateTime> getThreeContiguousSlotsWithLeastTraffic() {
