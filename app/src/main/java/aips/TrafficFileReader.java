@@ -12,27 +12,14 @@ import java.util.Scanner;
 public final class TrafficFileReader {
     Scanner scanner;
 
-    /**
-     * Construct a TrafficFileReader for a given filepath
-     * @param file input file
-     * @throws FileNotFoundException If the input file is not found
-     */
     public TrafficFileReader(File file) throws FileNotFoundException {
         scanner = new Scanner(file);
     }
 
-    /** return true if the input file still have content to read
-     * @return true if the input file still have content to read
-     */
     public boolean hasNext() {
         return scanner.hasNext();
     }
 
-    /**
-     * Advances this reader to read the next line and parse it into Slot Traffic
-     * The format would be "yyyy-HH-mmThh:mm:ss count". The input format is always valid
-     * @return the parsed SlotTraffic object
-     */
     public SlotTraffic next() {
         String input = scanner.nextLine();
         String[] tokens = input.split(" ");
@@ -41,9 +28,6 @@ public final class TrafficFileReader {
         return new SlotTraffic(time, count);
     }
 
-    /**
-     * Close the reader to release the file
-     */
     public void close() {
         scanner.close();
     }
