@@ -4,27 +4,22 @@
 package aips;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.out.println("It must has exactly one parameter for the input file path");
+            return;
+        }
         TrafficProcessor processor = new TrafficProcessor();
         TrafficFileReader reader;
-        try {
-            reader = new TrafficFileReader(new File("/Users/kew/IdeaProjects/aips/sample_input.txt"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        reader = new TrafficFileReader(new File(args[0]));
         while(reader.hasNext()) {
-            try {
-                processor.addSlotTraffic(reader.next());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            processor.addSlotTraffic(reader.next());
         }
         reader.close();
         System.out.println(processor.getTotalCount());
